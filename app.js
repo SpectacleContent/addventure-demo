@@ -294,28 +294,30 @@ function submitPath() {
   applyUsedUI();
   updateStats();
 
-  setMsg("Nice. Path locked.");
 
   // Optional simple end condition: all tiles used
- if (used.size === size * size) {
+if (used.size === size * size) {
   setMsg("Perfect score. You used every digit.");
   openEndModal(
     "Congratulations",
     `<div><b>Perfect score.</b> You used every digit.</div>
      <div style="margin-top:8px;">Paths: <b>${paths.length}</b></div>`
   );
- }
-   // Step 5: No more moves left (but not perfect)
+  return;
+}
+  // Out of moves (but not perfect)
 if (used.size < size * size && !hasAnyMoveLeft()) {
   const remaining = size * size - used.size;
+
   openEndModal(
-    "No more moves",
-    `<div>You are out of moves.</div>
+    "Your adventure ends here",
+    `<div><b>No more moves.</b></div>
      <div style="margin-top:8px;">Paths: <b>${paths.length}</b></div>
      <div>Tiles remaining: <b>${remaining}</b></div>`
   );
+  return;
 }
-}
+setMsg("Nice. Path locked.");
 
 function clearSelection() {
   currentPath = [];
