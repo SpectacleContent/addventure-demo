@@ -72,5 +72,23 @@
   </div>
 
   <script src="app.js"></script>
+  <!-- Endgame Overlay -->
+  <div id="endOverlay" class="overlay hidden">
+    <div class="overlayCard">
+      <div class="overlayTitle" id="endTitle">No more moves</div>
+      <div class="overlayBody" id="endSummary"></div>
+
+      <div class="overlayButtons">
+        <button id="showSolutionBtn" class="btn secondary" type="button">Show Perfect Solution</button>
+        <button id="closeOverlayBtn" class="btn primary" type="button">Close</button>
+      </div>
+
+      <div id="solutionWrap" class="solutionWrap hidden">
+        <div class="solutionTitle">Perfect Solution</div>
+        <div id="solutionBoard" class="board solutionBoard"></div>
+        <div id="solutionNote" class="solutionNote"></div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
