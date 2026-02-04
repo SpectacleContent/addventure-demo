@@ -363,7 +363,14 @@ function showEndgame() {
     solutionNote.textContent = "Solution not provided for this puzzle yet.";
   }
 
+if (endOverlay) {
   endOverlay.classList.remove("hidden");
+} else {
+  // If overlay HTML is not present yet, fall back to an in-panel message
+  setMsg(
+    `No more moves. Paths: ${pathsFound}. Tiles remaining: ${size * size - used.size}.`,
+    "bad"
+  );
 }
 
 function hideOverlay() {
@@ -428,7 +435,7 @@ clearBtn.addEventListener("click", clear);
 submitBtn.addEventListener("click", submit);
 reloadBtn.addEventListener("click", init);
 
-closeOverlayBtn.addEventListener("click", hideOverlay);
-showSolutionBtn.addEventListener("click", showSolution);
+if (closeOverlayBtn) closeOverlayBtn.addEventListener("click", hideOverlay);
+if (showSolutionBtn) showSolutionBtn.addEventListener("click", showSolution);
 
 init();
