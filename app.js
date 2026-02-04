@@ -1,10 +1,9 @@
-console.log("Add-venture app.js loaded");
+eeconsole.log("Add-venture app.js loaded");
 
 const LIVE_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRJgZUsgdm07UIdbSnoF2jIPNE-PdU656gIS641l5pufVDBa7Suj3eMOt-FWVgBdlBEcAalmJXNjsCg/pub?output=csv";
 
 const FALLBACK = {
-  size: 5,
   target: 18,
   grid: [
     [9, 3, 4, 1, 6],
