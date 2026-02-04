@@ -318,7 +318,7 @@ if (used.size < size * size && !hasAnyMoveLeft()) {
   return;
 }
 setMsg("Nice. Path locked.");
-
+}
 function clearSelection() {
   currentPath = [];
   currentSum = 0;
