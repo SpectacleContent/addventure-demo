@@ -302,7 +302,17 @@ function submitPath() {
   openEndModal(
     "Congratulations",
     `<div><b>Perfect score.</b> You used every digit.</div>
-     <div style="margin-top:8px;">Paths: <b>${paths}</b></div>`
+     <div style="margin-top:8px;">Paths: <b>${paths.length}</b></div>`
+  );
+ }
+   // Step 5: No more moves left (but not perfect)
+if (used.size < size * size && !hasAnyMoveLeft()) {
+  const remaining = size * size - used.size;
+  openEndModal(
+    "No more moves",
+    `<div>You are out of moves.</div>
+     <div style="margin-top:8px;">Paths: <b>${paths.length}</b></div>
+     <div>Tiles remaining: <b>${remaining}</b></div>`
   );
 }
 }
