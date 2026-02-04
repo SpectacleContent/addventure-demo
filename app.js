@@ -41,7 +41,35 @@ let currentSum = 0;
 
 let used = new Set(); // key "r,c"
 let paths = []; // each path = { cells:[{r,c}], sum, colorIndex }
+const endOverlay = document.getElementById("endOverlay");
+const endTitle = document.getElementById("endTitle");
+const endBody = document.getElementById("endBody");
+const showSolutionBtn = document.getElementById("showSolutionBtn");
+const playAgainBtn = document.getElementById("playAgainBtn");
 
+function openEndModal(title, bodyHtml) {
+  endTitle.textContent = title;
+  endBody.innerHTML = bodyHtml;
+  endOverlay.classList.remove("hidden");
+}
+
+function closeEndModal() {
+  endOverlay.classList.add("hidden");
+}
+
+playAgainBtn?.addEventListener("click", () => {
+  closeEndModal();
+  loadToday();
+});
+
+endOverlay?.addEventListener("click", (e) => {
+  if (e.target === endOverlay) closeEndModal();
+});
+
+// Placeholder. We can implement solution highlighting next.
+showSolutionBtn?.addEventListener("click", () => {
+  alert("Solution view coming next.");
+});
 const PATH_COLORS = [
   "path0",
   "path1",
