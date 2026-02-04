@@ -23,14 +23,50 @@ const elBoard = $("board");
 const elTarget = $("targetVal");
 const elCurrent = $("currentVal");
 const elUsed = $("usedVal");
+const elPaths = $("pathsVal");
 const elMsg = $("msg");
+
+const btnUndo = $("undoBtn");
+const btnClear = $("clearBtn");
+const btnSubmit = $("submitBtn");
+const btnReload = $("reloadBtn");
 
 let size = 5;
 let target = 18;
 let grid = FALLBACK.grid;
 
+// State
+let currentPath = []; // array of {r,c}
+let currentSum = 0;
+
+let used = new Set(); // key "r,c"
+let paths = []; // each path = { cells:[{r,c}], sum, colorIndex }
+
+const PATH_COLORS = [
+  "path0",
+  "path1",
+  "path2",
+  "path3",
+  "path4",
+  "path5",
+  "path6",
+  "path7",
+  "path8",
+  "path9",
+];
+
+function keyOf(r, c) {
+  return `${r},${c}`;
+}
+
 function setMsg(text) {
-  if (elMsg) elMsg.textContent = text;
+  if (elMsg) elMsg.textContent = text || "";
+}
+
+function isAdjacent(a, b) {
+  const dr = Math.abs(a.r - b.r);
+  const dc = Math.abs(a.c - b.c);
+  return dr <= 1 && dc <= 1 && !(dr === 0 && dc === 0);
 }
 
 function parseCSV(text) {
@@ -39,6 +75,10 @@ function parseCSV(text) {
     .split(/\r?\n/)
     .map((l) => l.split(",").map((x) => x.trim()));
 
+  // Expect:
+  // row 1: target,<number>
+  // row 2: board
+  // rows 3-7: 5 numbers each
   const t = Number(lines?.[0]?.[1]);
   const boardRows = lines.slice(2, 7).map((row) => row.slice(0, 5).map(Number));
 
@@ -66,7 +106,52 @@ async function loadPuzzle() {
   }
 }
 
-function render() {
+function resetRunState() {
+  currentPath = [];
+  currentSum = 0;
+  used = new Set();
+  paths = [];
+  setMsg("");
+  updateStats();
+}
+
+function updateStats() {
+  if (elTarget) elTarget.textContent = String(target);
+  if (elCurrent) elCurrent.textContent = String(currentSum);
+  if (elUsed) elUsed.textContent = `${used.size}/${size * size}`;
+  if (elPaths) elPaths.textContent = String(paths.length);
+}
+
+function clearCurrentSelectionUI() {
+  const selected = elBoard.querySelectorAll(".cell.selected");
+  selected.forEach((el) => el.classList.remove("selected"));
+}
+
+function applyUsedUI() {
+  // Re-apply classes based on paths list
+  const all = elBoard.querySelectorAll(".cell");
+  all.forEach((el) => {
+    el.classList.remove(
+      "used",
+      ...PATH_COLORS
+    );
+  });
+
+  for (const p of paths) {
+    const cls = PATH_COLORS[p.colorIndex % PATH_COLORS.length];
+    for (const cell of p.cells) {
+      const btn = cellEl(cell.r, cell.c);
+      if (!btn) continue;
+      btn.classList.add("used", cls);
+    }
+  }
+}
+
+function cellEl(r, c) {
+  return elBoard.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+}
+
+function renderBoard() {
   if (!elBoard) {
     alert('Could not find an element with id="board" in index.html');
     return;
@@ -81,23 +166,143 @@ function render() {
       btn.type = "button";
       btn.className = "cell";
       btn.textContent = String(grid[r][c]);
+      btn.dataset.r = String(r);
+      btn.dataset.c = String(c);
+
+      btn.addEventListener("click", () => onCellClick(r, c));
       elBoard.appendChild(btn);
     }
   }
 
-  if (elTarget) elTarget.textContent = String(target);
-  if (elCurrent) elCurrent.textContent = "0";
-  if (elUsed) elUsed.textContent = `0/${size * size}`;
-
-  setMsg("Board rendered.");
+  resetRunState();
 }
 
-async function init() {
+function onCellClick(r, c) {
+  const k = keyOf(r, c);
+
+  // Already locked into a submitted path
+  if (used.has(k)) {
+    setMsg("That digit is already used.");
+    return;
+  }
+
+  // If clicking the last tile again, pop it off
+  if (currentPath.length > 0) {
+    const last = currentPath[currentPath.length - 1];
+    if (last.r === r && last.c === c) {
+      popCurrent();
+      return;
+    }
+  }
+
+  // If first selection, always ok
+  if (currentPath.length === 0) {
+    pushCurrent(r, c);
+    return;
+  }
+
+  // Must be adjacent to the last (including diagonal)
+  const last = currentPath[currentPath.length - 1];
+  if (!isAdjacent(last, { r, c })) {
+    setMsg("Must touch the last digit (diagonals allowed).");
+    return;
+  }
+
+  // Cannot reuse within the current path
+  if (currentPath.some((p) => p.r === r && p.c === c)) {
+    setMsg("A digit cannot be used twice in one path.");
+    return;
+  }
+
+  pushCurrent(r, c);
+}
+
+function pushCurrent(r, c) {
+  currentPath.push({ r, c });
+  currentSum += grid[r][c];
+
+  const btn = cellEl(r, c);
+  if (btn) btn.classList.add("selected");
+
+  updateStats();
+  setMsg("");
+}
+
+function popCurrent() {
+  if (currentPath.length === 0) return;
+  const last = currentPath.pop();
+  currentSum -= grid[last.r][last.c];
+
+  const btn = cellEl(last.r, last.c);
+  if (btn) btn.classList.remove("selected");
+
+  updateStats();
+  setMsg("");
+}
+
+function submitPath() {
+  if (currentPath.length === 0) {
+    setMsg("Select digits first.");
+    return;
+  }
+
+  if (currentSum !== target) {
+    setMsg(`That path sums to ${currentSum}. Need ${target}.`);
+    return;
+  }
+
+  // Lock in the path
+  const colorIndex = paths.length;
+  paths.push({ cells: [...currentPath], sum: currentSum, colorIndex });
+
+  for (const cell of currentPath) {
+    used.add(keyOf(cell.r, cell.c));
+  }
+
+  // Clear selection, apply coloring
+  currentPath = [];
+  currentSum = 0;
+
+  clearCurrentSelectionUI();
+  applyUsedUI();
+  updateStats();
+
+  setMsg("Nice. Path locked.");
+
+  // Optional simple end condition: all tiles used
+  if (used.size === size * size) {
+    setMsg("Perfect score. You used every digit.");
+  }
+}
+
+function clearSelection() {
+  currentPath = [];
+  currentSum = 0;
+  clearCurrentSelectionUI();
+  updateStats();
+  setMsg("");
+}
+
+function undo() {
+  popCurrent();
+}
+
+async function reload() {
   const puzzle = await loadPuzzle();
   size = puzzle.size;
   target = puzzle.target;
   grid = puzzle.grid;
-  render();
+  renderBoard();
 }
 
-init();
+function wireButtons() {
+  if (btnUndo) btnUndo.addEventListener("click", undo);
+  if (btnClear) btnClear.addEventListener("click", clearSelection);
+  if (btnSubmit) btnSubmit.addEventListener("click", submitPath);
+  if (btnReload) btnReload.addEventListener("click", reload);
+}
+
+(async function init() {
+  wireButtons();
+  await reload();
+})();
