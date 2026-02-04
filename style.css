@@ -212,3 +212,76 @@ body {
 .perfect.show {
   display: block;
 }
+/* Completed path coloring */
+.cell.done {
+  opacity: 1;
+  cursor: not-allowed;
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Endgame overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlayCard {
+  width: min(820px, 100%);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.overlayTitle {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.overlayBody {
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.overlayButtons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.solutionWrap {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.solutionWrap.hidden {
+  display: none;
+}
+
+.solutionTitle {
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.solutionBoard .cell {
+  cursor: default;
+}
+
+.solutionNote {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 10px;
+}
