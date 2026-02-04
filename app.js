@@ -298,9 +298,14 @@ function submitPath() {
   setMsg("Nice. Path locked.");
 
   // Optional simple end condition: all tiles used
-  if (used.size === size * size) {
-    setMsg("Perfect score. You used every digit.");
-  }
+ if (used.size === size * size) {
+  setMsg("Perfect score. You used every digit.");
+  openEndModal(
+    "Congratulations",
+    `<div><b>Perfect score.</b> You used every digit.</div>
+     <div style="margin-top:8px;">Paths: <b>${paths}</b></div>`
+  );
+}
 }
 
 function clearSelection() {
