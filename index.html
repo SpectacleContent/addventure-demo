@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add-venture Demo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div class="brand">
+        <div class="title">Add-venture</div>
+        <div class="subtitle">
+          Connect digits to hit the target. Moves can be up, down, left, right, or diagonal.
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Target</div>
+          <div class="value" id="targetVal">18</div>
+        </div>
+        <div class="stat">
+          <div class="label">Current</div>
+          <div class="value" id="currentVal">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Used</div>
+          <div class="value" id="usedVal">0/25</div>
+        </div>
+        <div class="stat">
+          <div class="label">Paths</div>
+          <div class="value" id="pathsVal">0</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="boardWrap">
+        <div id="board" class="board"></div>
+      </section>
+
+      <aside class="panel">
+        <div class="card">
+          <div class="cardTitle">Quick Rules</div>
+          <ol class="rules">
+            <li>Create a path that adds up to the target.</li>
+            <li>Each move must touch the last, including diagonals.</li>
+            <li>Digits may only be used once.</li>
+            <li>A perfect score uses every digit exactly once.</li>
+          </ol>
+        </div>
+
+        <div class="buttons">
+          <button id="undoBtn" class="btn secondary">Undo</button>
+          <button id="clearBtn" class="btn secondary">Clear</button>
+          <button id="submitBtn" class="btn primary">Submit Path</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+
+        <div class="buttons">
+          <button id="reloadBtn" class="btn secondary">Reload Today</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div id="perfect" class="perfect"></div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
