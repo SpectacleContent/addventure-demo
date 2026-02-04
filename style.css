@@ -311,3 +311,42 @@ body {
 .cell.path7 { background: rgba(139, 195, 74, 0.35); }
 .cell.path8 { background: rgba(63, 81, 181, 0.35); }
 .cell.path9 { background: rgba(233, 30, 99, 0.35); }
+.overlay.hidden { display: none; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal {
+  width: min(520px, 92vw);
+  background: rgba(30, 33, 40, 0.95);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+
+.modalTitle {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.modalBody {
+  font-size: 15px;
+  line-height: 1.4;
+  opacity: 0.95;
+  margin-bottom: 14px;
+}
+
+.modalButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
